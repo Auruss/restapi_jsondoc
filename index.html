@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="css/metro-bootstrap.min.css">
+    <link rel="stylesheet" href="css/metro-bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+    <script src="src/metro.min.js"></script>
+    <script src="src/dot.min.js"></script>
+</head>
+
+<body class="metro">
+
+<nav id="menu-sidebar" class="sidebar dark">
+    <ul>
+        <li class="title">Overview</li>
+        <li class="active"><a href="#" id="show-description"><i class="icon-home"></i>Description</a></li>
+        <li class="stick bg-yellow">
+            <a class="dropdown-toggle" href="#"><i class="icon-tree-view"></i>JSON API Doc</a>
+            <ul class="dropdown-menu" data-role="dropdown">
+                <li><a href="">users.json</a></li>
+                <li><a href="">users.json</a></li>
+                <li><a href="">users.json</a></li>
+            </ul>
+        </li>
+
+        <li class="title">RESTful API</li>
+        <li><a href="#" id="show-user-api">Users</a></li>
+        <li><a href="#" id="show-access-key-api">Access-Key</a></li>
+        <li><a href="#" id="show-status-api">Status</a></li>
+    </ul>
+</nav>
+
+<div id="content">
+    <h1 id="page-title">Page Title</h1>
+    <hr />
+    <div id="page-content" class="grid fluid"></div>
+</div>
+
+
+
+</body>
+
+<script>
+    var load_content = function(container) {
+        $.getScript( "views/api.js", function(view) {
+            var obj = eval(view.substr(0, view.length - 4) + ")");
+            $.getJSON("groups/"+container+".json", function(data) {
+                $(".active").removeClass("active");
+                $("#show-"+container+"-api").parent().addClass("active");
+                $("#page-content").html(window.render.api(data));
+                $("#page-title").html(container + " API");
+                $(".panel").toggleClass('collapsed');
+                $(".panel-content").toggle();
+                $.Metro.initPanels("#page-content");
+                $.Metro.initTabs("#page-content");
+            });
+        });
+    };
+
+    $("#show-description").on("click", function() {
+        $.getScript("views/overview.js", function (data) {
+            var obj = eval(data.substr(0, data.length - 4) + ")");
+            $("#page-content").html(window.render.overview());
+            $("#page-title").html("Overview");
+            $(".active").removeClass("active");
+            $("#show-description").parent().addClass("active");
+        });
+    });
+    $("#show-description").click();
+
+    $("#show-user-api").on("click", function() {
+        load_content("user");
+    });
+
+    $("#show-access-key-api").on("click", function() {
+        load_content("access-key");
+    });
+
+    $("#show-status-api").on("click", function() {
+        load_content("status");
+    });
+</script>
+
+</html>

@@ -1,0 +1,23 @@
+{
+  "/status/website": {
+    "GET": {
+      "short": "Returns website status",
+      "description": "Returns the current website status / mode",
+      "response": {
+        "200": {
+          "description": "Result returned",
+          "models": {
+            "website-status": {}
+          }
+        }
+      }
+    }
+  },
+
+  "models": {
+    "website-status": {
+      "onMaintenance": {"type": "bool"},
+      "maintenance": {"type": "string"}
+    }
+  }
+}

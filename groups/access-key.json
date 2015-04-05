@@ -1,0 +1,69 @@
+{
+  "access-key/{access-key.key}": {
+    "POST": {
+      "short": "Creates a new key",
+      "description": "Creates a new key either the given key or an random generated key",
+      "response": {
+        "200": {
+          "description": "Key created successfully",
+          "models": {
+            "access-key": {
+              "include": "key"
+            }
+          }
+        },
+        "401": {
+          "description": "Access denied"
+        }
+      }
+    },
+    "DELETE": {
+      "short": "Deletes a key",
+      "description": "Deletes the given key forever",
+      "response": {
+        "200": {
+          "description": "Key was deleted successfully"
+        },
+        "400": {
+          "description": "Invalid key"
+        },
+        "401": {
+          "description": "Access denied"
+        }
+      }
+    }
+  },
+
+  "access-key/list/{filter}": {
+    "GET": {
+      "short": "Filters all access-keys",
+      "description": "Returns all access-keys that are matching the filter",
+      "response": {
+        "200": {
+          "description": "Request succeeded",
+          "models": {
+            "access-key": {"array": true}
+          }
+        },
+        "400": {
+          "description": "Filter is invalid"
+        },
+        "401": {
+          "description": "Access denied"
+        }
+      }
+    }
+  },
+
+  "models": {
+    "access-key": {
+      "key": {"type": "string"},
+      "description": {"type": "string"}
+    },
+    "error": {
+      "code": {
+        "type": "int"
+      }
+    }
+  }
+}

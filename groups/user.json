@@ -1,0 +1,198 @@
+{
+  "/user/": {
+    "POST": {
+      "short": "Adds a new user",
+      "description": "Tries to add a new user to the database.",
+      "request": {
+        "models": {
+          "user": {
+            "without": ["id"]
+          }
+        }
+      },
+      "response": {
+        "200": {
+          "description": "User succesfully updated and the new users id returned.",
+          "models": {
+            "user": {
+              "include": ["id"]
+            }
+          }
+        },
+        "400": {
+          "description": "Failed to create a new user. See error_code for more information.",
+          "models": {
+            "error": {}
+          }
+        },
+        "401": {
+          "description": "Access denied: No permission for this api call"
+        }
+      }
+    }
+  },
+
+  "/user/login": {
+    "GET": {
+      "short": "Logging in a user",
+      "description": "Login to create an session based access-key<br>Note that this api call does not need any permission",
+      "request": {
+        "models": {
+          "user": {
+            "include": ["email","password"]
+          }
+        }
+      },
+      "response": {
+        "200": {
+          "description": "Login was successful",
+          "models": {"session": {}}
+        },
+        "400": {
+          "description": "Wrong input, probably wrong password/email",
+          "models": {"error": {}}
+        }
+      }
+    },
+    "PUT": {
+      "short": "Updates the user-session",
+      "description": "Refreshes the user-session and therefore prevent session expire",
+      "request": {
+      },
+      "response": {
+        "200": {
+          "description": "Update successful"
+        },
+        "400": {
+          "description": "Wrong input, probably wrong email/password",
+          "models": {"error": {}}
+        },
+        "401": {
+          "description": "The Session does not belong to the api-caller"
+        }
+      }
+    }
+  },
+
+  "/user/{id}": {
+    "GET": {
+      "short": "Returns a user",
+      "description": "",
+      "response": {
+        "200": {
+          "description": "Returned user successfully",
+          "models": {
+            "user": {
+              "without": ["password"]
+            }
+          }
+        },
+        "400": {
+          "description": "Wrong input",
+          "models": {"error": {}}
+        },
+        "401": {
+          "description": "Access denied"
+        }
+      }
+    },
+    "PUT": {
+      "short": "Updates the user",
+      "description": "<b>Note:</b> Depending on your access-level, you are not able to change every model key.",
+      "request": {
+        "models": {
+          "user": {
+            "without": ["id"]
+          }
+        }
+      },
+      "response": {
+        "200": {
+          "description": "User was successfully updated"
+        },
+        "400": {
+          "description": "Wrong input data, See error_code for more information.",
+          "models": {
+            "error": {}
+          }
+        },
+        "401": {
+          "description": "Access denied"
+        }
+      }
+    },
+    "DELETE": {
+      "short": "Removes the user",
+      "description": "Completely removes an user",
+      "response": {
+        "200": {
+          "description": "Success"
+        },
+        "400": {
+          "description": "Wrong Input data"
+        },
+        "401": {
+          "description": "Access denied"
+        }
+      }
+    }
+  },
+
+  "/user/list/{filter}": {
+    "GET": {
+      "short": "Returns an user array",
+      "description": "Filter is our standard filter mechanism!",
+      "response": {
+        "200": {
+          "description": "Filtering was successful",
+          "models": {
+            "user": {
+              "array": true,
+              "without": ["password"]
+            }
+          }
+        },
+        "400": {
+          "description": "Wrong input data",
+          "models": {
+            "error": {}
+          }
+        },
+        "401": {
+          "description": "Access denied"
+        }
+      }
+    }
+  },
+
+  "models": {
+    "user": {
+      "id": {
+        "type": "int"
+      },
+      "email": {
+        "type": "string"
+      },
+      "username": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string"
+      }
+    },
+    "error": {
+      "error_code": {
+        "type": "int",
+        "values": {
+          "0": "Unknown",
+          "1": "Wrong ID parameter"
+        }
+      }
+    },
+    "session": {
+      "session_id": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,177 @@
+{{ var call_id = 0; }}
+{{ for(var call in it) { }}
+{{ if(call == "models") continue; }}
+<div class="panel" data-role="panel">
+    <div class="panel-header bg-darkRed fg-white">
+        {{ for(var type in it[call]) { }}
+        <button class="small primary">{{=type}}</button>
+        {{ } }}
+        {{=call}}
+    </div>
+    <div class="panel-content">
+        <div class="tab-control" data-role="tab-control">
+            <ul class="tabs">
+                {{ var i = 0; }}
+                {{ for(var type in it[call]) { }}
+                <li {{ if(i==0) {}} class="active" {{ } }}><a href="#_{{=call_id}}_{{=i}}">{{=type}}</a></li>
+                {{ i++; } }}
+            </ul>
+
+            <div class="frames">
+                {{ var i = 0; }}
+                {{ for(var type in it[call]) { }}
+                <div class="frame" id="_{{=call_id}}_{{=i}}">
+                    <h3>{{=it[call][type].short}}</h2>
+                    <p>{{=it[call][type].description}}</p>
+                    <br />
+
+                    <h3>Request Parameters</h3>
+                    <table class="table hovered">
+                        <thead>
+                            <tr>
+                               <th class="text-left">Name</th>
+                               <th class="text-left">Type</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {{ if ("request" in it[call][type]) { }}
+                            {{ if ("models" in it[call][type].request) { }}
+                                {{ for(var model in it[call][type].request.models) { }}
+                                    {{ for(var prop in it["models"][model]) { }}
+
+                                    {{ if ("include" in it[call][type].request.models[model]) { }}
+                                        {{ if (it[call][type].request.models[model].include.indexOf(prop) < 0) continue;}}
+                                    {{ } }}
+
+                                    {{ if ("without" in it[call][type].request.models[model]) { }}
+                                        {{ var cont = false; }}
+                                        {{ for (var ignore in it[call][type].request.models[model].without) { }}
+                                            {{ if(it[call][type].request.models[model].without[ignore] == prop) {cont=true;break;} }}
+                                        {{ } }}
+                                        {{ if(cont) continue; }}
+                                    {{ } }}
+
+                                    <tr>
+                                    <td>{{=model}}.{{=prop}}</td>
+                                    <td>{{=it["models"][model][prop].type}}</td>
+                                    </tr>
+
+                                    {{ } }}
+                                {{ } }}
+                            {{ } }}
+                            {{ } }}
+                        </tbody>
+                    </table>
+                    <br />
+
+                    <h3>Response</h3>
+                    <table class="table hovered">
+                       <thead>
+                           <tr>
+                              <th class="text-left">Response Code</th>
+                              <th class="text-left">Response Data</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                       {{ for(var code in it[call][type].response) { }}
+                            <tr>
+                                <td>{{=code}}</td>
+                                <td>
+                                {{=it[call][type].response[code].description}}
+                                <br />
+                                <br />
+                                 <table class="table">
+                                    <thead>
+                                        <tr>
+                                           <th class="text-left">Name</th>
+                                           <th class="text-left">Type</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    {{ if ("models" in it[call][type].response[code]) { }}
+                                        {{ for(var model in it[call][type].response[code].models) { }}
+                                            {{ if ("array" in it[call][type].response[code].models[model]) { }}
+                                            <tr>
+                                                <td>{{=model}}</td>
+                                                <td>array</td>
+                                            </tr>
+                                            {{ } }}
+
+                                            {{ for(var prop in it["models"][model]) { }}
+
+                                            {{ if ("include" in it[call][type].response[code].models[model]) { }}
+                                                {{ if (it[call][type].response[code].models[model].include.indexOf(prop) < 0) continue;}}
+                                            {{ } }}
+
+
+                                            {{ if ("without" in it[call][type].response[code].models[model]) { }}
+                                                {{ var cont = false; }}
+                                                {{ for (var ignore in it[call][type].response[code].models[model].without) { }}
+                                                    {{ if(it[call][type].response[code].models[model].without[ignore] == prop) {cont=true;break;} }}
+                                                {{ } }}
+                                                {{ if(cont) continue; }}
+                                            {{ } }}
+
+                                            <tr>
+
+                                            {{ if ("array" in it[call][type].response[code].models[model]) {}}
+                                                <td>&nbsp;&nbsp;&nbsp;&nbsp;{{=model}}.{{=prop}}</td>
+                                            {{ } else { }}
+                                                <td>{{=model}}.{{=prop}}</td>
+                                            {{ } }}
+
+                                            <td>{{=it["models"][model][prop].type}}</td>
+                                            </tr>
+
+                                            {{ } }}
+                                        {{ } }}
+                                    {{ } }}
+                                    </tbody>
+                                 </table>
+                                </td>
+                            </tr>
+                       {{ } }}
+                       </tbody>
+                    </table>
+                </div>
+                {{ i++; } }}
+            </div>
+
+        </div>
+    </div>
+</div>
+<br />
+{{ call_id++; } }}
+<br />
+<h1>Models</h1>
+<hr />
+{{ for(model in it["models"]) { }}
+<div class="panel" data-role="panel">
+    <div class="panel-header bg-darkRed fg-white">
+        {{=model}}
+    </div>
+
+    <div class="panel-content">
+     <table class="table">
+        <thead>
+            <tr>
+               <th class="text-left">Name</th>
+               <th class="text-left">Type</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{ for(var prop in it["models"][model]) { }}
+            <tr>
+                <td>{{=prop}}</td>
+                <td>{{=it["models"][model][prop].type}}</td>
+            </tr>
+            {{ } }}
+        </tbody>
+      </table>
+    </div>
+</div>
+<br />
+{{ } }}
